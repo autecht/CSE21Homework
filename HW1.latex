@@ -1,0 +1,191 @@
+\documentclass[10pt,letterpaper,unboxed,cm]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{graphicx}
+\usepackage{enumerate, comment}
+\usepackage{adjustbox}
+
+\newcommand{\st}{~\mid~}
+\newcommand{\ind}{$~~~~~$}
+
+
+
+
+\begin{document}
+
+\hfill{CSE 21 Winter 2023}
+
+\hfill{Homework 1}
+
+\hfill{Due date: Tuesday, January 24, 2023 at 11:59pm}
+
+\begin{center}
+\begin{minipage}[t]{5.7in}
+\rule{\linewidth}{2pt}
+{\sc Instructions}\newline
+
+This homework should be done in {\bf groups} of one to four students, without assistance from anyone besides the instructional staff and your group members.  Homework must be submitted through Gradescope by a {\bf single representative} of your group and received by {\bf 11:59pm} on the due date. There are no exceptions to this rule.\\
+ 
+You will be able to look at your scanned work before submitting it. 
+ You must {\bf type} your solutions. (hand-drawn diagrams are okay.)
+ Your group representative can resubmit your assignment as many times as you like before the deadline. Only the most recent submission will be graded.\\
+
+Students should consult their textbook, class notes, lecture slides, podcasts, group members, instructors, TAs, and tutors when 
+they need help with homework. You may ask questions about the homework in office hours, but questions on Piazza should be private, visible only to instructors. 
+
+This assignment will be graded for not only the \emph{correctness} of your answers, but on your ability to present your ideas clearly and logically. When asked to explain or justify, present clearly how you arrived at your conclusions and justify the correctness of your answers with mathematically sound reasoning. Whether you use formal proof techniques or write a more informal argument for why something is true, your answers should always be well-supported. Your goal should be to {\bf convince the reader} that your results and methods are sound.
+
+
+
+
+
+{\sc Key Concepts} Sum Rule, Disjoint Sets, Product Rule, Inclusion-Exclusion Principle, Counting by Complements, Counting Recursively, Recurrence Relations.
+
+
+\rule{\linewidth}{2pt}
+\end{minipage} \hfill
+
+\end{center}
+
+\begin{enumerate}
+    \item (15 points) Brian is playing a certain video game that involves playing an ocarina with only 5 notes corresponding to the following buttons: Up, Down, Left, Right, and A. We can denote each of these notes as “U”, “D”, “L”, “R”, and “A”. Each song can be composed of $n$ notes. For example, we can play the rain song using the following sequence of 6 notes: ADUADU. They made their own song that summons a strange scarecrow, but they don’t remember the song! They know that the song is $n$ notes long for some $n \geq 1$, and that they never have the “A” note 3 times in a row. Let $S(n)$ be the number of $n$ length note sequences that don’t have the “A” note 3 times in a row.
+    \begin{enumerate}
+        \item (6 points) Compute $S(1)$, $S(2)$, $S(3)$, $S(4)$, $S(5)$, and $S(6)$.\\
+
+        For templates, A represents the letter A, O represents any other letter\\
+
+        $S(1) = 5 \\ \newline S(2) = 5^2 = 25$ \\\\
+        AAO, AOA, OAA, OOA, OAO, AOO, OOO\\
+        $S(3) = 3*4 + 3*4^2 + 4^3 = 124$\\\\
+        4 templates with 1 A, each with $4^3$ possibilities\\
+        6 templates with 2 A's (AAOO, AOAO, AOOA, OAAO, OAOA, OOAA), each with $4^2$ possibilities\\
+        2 templates with 3 A's, each with $4$ possibilities\\
+        $S(4) = 4 * 4^3 + 6 * 4^2+2*4 = 360$\\\\
+        5 templates with 1 A, each with $4^4$ possibilities\\
+        10 templates with 2 A's (AAOOO, AOAOO, AOOAO, AOOOA, OAAOO, OAOAO, OAOOA, OOAAO, OOAOA, OOOAA), each with $4^3$ possibilities\\
+        7 templates with 3 A's, each with $4^2$ possibilities\\
+        1 template with 1 A, with 4 possibilities\\
+        $S(5) = 5* 4^4 + 10*4^3 + 7*4^2+4 = 2036$\\\\
+        6 templates with 1 A, each with $4^5$ possibilities\\
+        15 templates with 2 A's (AAOOOO, AOAOOO, AOOAOO, AOOOAO, AOOOOA, OAAOOO, OAOAOO, OAOOAO, OAOOOA, OOAAOO, OOAOAO, OOAOOA, OOOAAO, OOOAOA, OOOOAA), each with $4^4$ possibilities\\
+        16 templates with 3 A's (AAOAOO, AAOOAO, AAOOOA, AOAAOO, AOAOAO, AOAOOA, AOOAAO, AOOAOA, AOOOAA, OAAOAO, OAAOOA, OAOAAO, OAOAOA, OAOOAA, OOAAOA, OOAOAA), each with $4^3$ possibilities\\
+        6 templates with 4 A's, each with $4^2$ possibilities\\
+        $S(6) = 6*4^5 + 15*4^4 + 16*4^3 + 6*4^2 = 11104$\\
+        
+        \item (9 points) Find a recurrence for $S(n)$, and using a case analysis, explain in words why $S(n)$ satisfies the recurrence.\\
+        case 1: starts with U, D, L, or R, in which case $4S(n-1)$ options\\
+        case 2: starts with A, then U, D, L, or R, in which case $4S(n-2)$ options\\
+        case 3: starts with AA, then U, D, L, or R, in which case $4S(n-1)$ options\\
+        $S(n) = 4S(n-1)+4S(n-2)+4S(n-3), n \geq 4, S(1) = 5, S(2) = 25, S(3) = 124$\\
+        $S(n)$ satisfies the recurrence because when n is greater than or equal to 4, there are 5 valid cases. Four of the cases begin with a letter that is not A. Each of these four cases have $S(n-1)$ possibilities because the first letter does not influence the possibilities for the rest of the string and there are $n-1$ letters left. The fifth case is that is starts with an A. This case can further be divided into four cases that continue with a letter that is not A and 1 that continues with A. Each of the four cases beginning with A and a letter that is not A have $S(n-2)$ possibilities because the second letter means the letters in the rest of the string are not further limited, and there are $n-2$ letters remaining. Finally, the case that begins with AA can be further divided into 4 valid cases, each continuing with one of the letters that is not A. Each of these 4 cases have $S(n-3)$ possibilities because the third letter not being A means the letters in the rest of the string are not further limited, and there are $n-3$ letters remaining. Summing up the the product of each case and it's number of possibilities yields $4S(n-1)+4S(n-2)+4S(n-3)$. When n is less than 4 and recurrence begins excluding cases and inputting values less than 1, the base cases were calculated using templates representing all cases in part a. \emph{MAY NEED TO CHANGE BASE CASES TO INCREASE}
+    \end{enumerate} 
+    \bigskip
+    \item (15 points)In a certain tabletop game, players have characters with 6 different and independent ability scores: Strength, Dexterity, Constitution, Wisdom, Intelligence, and Charisma, which are each positive integers to a maximum of 20. We can denote these as STR, DEX, CON, WIS, INT, and CHA. A player’s collection of ability scores are called stats, or a stat spread. For example, one player’s stats could be 8 STR, 13 DEX, 12 CON, 18 WIS, 9 INT, and 16 CHA. In a certain play through, players are selecting their ability scores by randomly selecting integers between 8 and 18, inclusive (the example stats above are a possible stats spread). {\bf Unless otherwise stated, you must show work and explain how you got the numbers in your answers.}
+    \begin{enumerate}
+        \item (2 points) How many different stat spreads are there? (You can leave your answer unsimplified, and do not need to show work for this part)
+\\
+        There are $11^6$ stat spreads (since there are 6 locations each with 1 of 11 values).
+        \item (3 points) Brennan wants to end up with at least 2 ability scores that are 18. In how many ways is this possible?\\
+        
+
+        Let S be set of options with at least two ability scores that are 18. Let A be the set of options with no ability scores being 18. Let B be the set of options with exactly one ability score being 18.\\
+        $|A| = 10^6$ since each of the 6 abilities can take 1 of 10 values (8-17)\\
+        There are 6 templates where 1 score is fixed at 18 and all others less than 18. In each template, each of the 5 non-fixed abilities can take 1 of 10 values, so
+        $|B| = 6 * 10^5$\\
+
+        $|S| = 11^6 - |S^c| = 11^6 - |A| - |B| = 11^6 - 10^6 - 6*10^5 = 171561$\\
+        So, this is possible in 171561 ways.
+        
+        \item (4 points) Murph has terrible luck and just wants none of their ability scores to be less than 10, and at least one of their ability scores to be at least 12. In how many ways is this possible?\\
+        To satisfy Murph's first desire, we can restrict the possibilities to those where no ability score is less than 10. With this restriction, each ability can be one of 9 options, so there are $9^6$ possibilities.\\
+        Let B be the set of such possibilities where at least one ability score is at least 12.\\
+        $|B|$ represents what Murph wants.\\
+        $|B| = 9^6 - |B^c|$\\
+        Within $B^c$, each score can take 1 of 2 values (10 or 11), so $|B^c| = 2^6$\\
+        $|B| = 9^6 - 2^6 = 531377$\\ So, this is possible in 531377 ways.
+        
+        \item (6 points) Emily wants to play a spellcaster, so ideally they want to have high WIS, INT, or CHA. In how many ways can they end up with a character where at least one of \{WIS, INT, CHA\} is 18, or where at least two of \{WIS, INT, CHA\} are at least 16, or where all of \{WIS, INT, CHA\} are at least 14? 
+        \bigskip
+        
+        {\bf Note 1:} Possible stat spreads include (10 STR , 13 DEX, 10 CON, {\bf 18 WIS}, 16 INT, 17 CHA), (11 STR , 14 DEX, 8 CON, {\bf 16 WIS, 17 INT}, 9 CHA), and (9 STR , 18 DEX, 18 CON, {\bf 14 WIS, 15 INT, 16 CHA}), respectively. 
+        \bigskip
+        
+        {\bf Note 2:} Emily does not care what their STR, DEX, or CON are, BUT for the purposes of this problem, they affect the number of possible stat spreads. For example, (11 STR , 12 DEX, 13 CON, 18 WIS, 8 INT, 11 CHA) and (14 STR , 15 DEX, 16 CON, 18 WIS, 8 INT, 11 CHA) are considered DISTINCT stat spreads.
+        \\
+        Let A be the event that at least one of WIS, INT, or CHA is 18. Let B be be the event that at least 2 of WIS, INT, or CHA are at least 16. Let C be the event that WIS, INT, and CHA are all at least 14.\\
+        $|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C|$\\
+        
+        $|A| = 11^6 - |A^c| = 11^6 - 10^6 = 771561$\\
+        $|B|$: H denotes at an ability score of at least 16. L denotes and ability score of less than 16. M denotes any valid ability score. Templates in B are HHHMMM, HHLMMM, HLHMMM, and LHHMMM.There are three options for each H, 8 for each L, and 11 for each M.\\
+        $|B| = 3^3*11^3 + 3*3^2*8*11^3 = 323433$\\
+        $|C| = 5^6 = 15625$ \\
+        $|A \cap B|$: H denotes at an ability score of 16 or 17. L denotes and ability score of less than 16. M denotes any valid ability score. Z denotes an ability score of 18. Templates in $|A \cap B|$ are ZHHMMM, HZHMMM. HHZMMM, ZHLMMM, HZLMMM, ZLHMMM, HLZMMM, LZHMMMN, and LHZMMM.There are two options for each H, 8 for each L, 11 for each M, and 1 for each Z.\\
+        $|A \cap B| = 3*2^2*11^3 + 6*2*8*11^3 = 143748$
+        \\
+        $|A \cap C| = |C| - |A^c \cap C| = 15625 - 4^6 = 11529$: \\
+        $|B \cap C|$: H denotes at an ability score of at least 16. L denotes and ability score of 14 or 15. M denotes any valid ability score. Templates in $|B \cap C|$ are HHHMMM, HHLMMM, HLHMMM, and LHHMMM. There are three options for each H, 2 for each L, and 11 for each M.\\
+        $|B \cap C| = 3^3*11^3 + 3*3^2*2*11^3 = 107811$\\
+        $|A \cap B \cap C| = |B \cap C| - |B \cap C \cap A^c|$ \\
+        $|B \cap C \cap A^c|$: H denotes at an ability score of 16 or 17. L denotes and ability score of 14 or 15. M denotes any valid ability score. Templates in $|B \cap C \cap A^c|$ are HHHMMM, HHLMMM, HLHMMM, and LHHMMM. There are 2 options for each H, 2 for each L, and 11 for each M.\\
+        $|B \cap C \cap A^c| = 2^3*11^3 + 3*2^2*2*11^3 = 42592$\\
+        $|A \cap B \cap C| = |B \cap C| - |B \cap C \cap A^c| = 107811 - 42592 = 65219$\\
+        $|A \cup B \cup C| = |A| + |B| + |C| - |A \cap B| - |A \cap C| - |B \cap C| + |A \cap B \cap C| = 771561 + 323433 + 15625 - 143748 - 11529 - 107811 + 65219 = 912750$\\ The size of $|A \cup B \cup C|$, 912750, is how many ways Emily can end up with a character she wants.
+        
+    \end{enumerate}
+
+    \item (8 points) Consider the following recurrence relation:
+
+    \[f(0) = 2, f(1) = 15, f(n) = 10f(n-1) - 25f(n-2) \textrm{ for } n \geq 2\]
+
+    Prove using induction that the closed form of $f(n)$ is $f(n) = (n+2)\cdot5^n$.\\
+    
+    Base cases: $(0 + 2)*5^0 = 2 *1 = 2 = f(0)$\\ $(1+2)*5^1 = 3*5 = 15 = f(1)$ \\
+    Induction hypothesis: Assume $f(i) = (i+2)*5^i$ for $0 \leq i < n$, where $n \geq 2$.\\
+    Induction Step: WTS $f(n) = (n + 2)*5^n$\\
+    $f(n) = 10f(n-1) - 25f(n-2) = 10(n + 1)*5^{n-1} - 25(n)*5^{n-2} = 2(n + 1)*5^n - n*5^n = (2n + 2 - n)*5^n = (n + 2)*5^n$ \\
+    Since the statement is true for n = 0 and n = 1, and $f(i) = (i+2)*5^i$ for all $1 \leq i < n$ implies $f(n) = (i+2)*5^n$, the claim holds true for all non-negative integers.
+
+    \item (10 points) Consider the following recurrence relation:
+
+    \[T(0) = 1, T(1) = 5, T(n) = 4T(n-1) + 5T(n-2)\textrm{ for } n \geq 2\]
+
+    Use the guess and check method to guess a closed form for $T(n)$ and then prove that it is a closed form for $T(n)$ using induction.\\
+    \begin{table}[h]
+    \begin{tabular}{|c|c|}
+    n & T(n)\\
+    0&1\\
+    1 &5\\
+    2 & $4*5+5*1 = 25$   \\
+    3 & $4*25 + 5*5 = 125$\\
+    4&$4*125 + 5*25 = 625$
+    \end{tabular}
+    \end{table}\\
+    Guess: $T(n) = 5^n$\\
+    Check:\\
+    Base cases: $5^0 = 1 = T(0)$\\$5^1 = 5 = T(1)$\\
+    Induction Hypothesis: Assume for $1 \leq i < n$, $T(i) = 5^i$\\
+    Induction Step: WTS $T(n) = 5^n$\\
+    $T(n) = 4T(n-1)+5T(n-2) = 4*5^{n-1} + 5*5^{n-2} = 4*5^{n-1} + 5^{n-1} = 5*5^{n-1} = 5^n$\\
+    Since the statement is true for n = 0 and n = 1, and $T(i) = 5^i$ for all $1 \leq i < n$ implies $T(n) = 5^n$, the claim is true for all non-negative integers.\\
+
+
+    \item (12 points) Consider the following recurrence relation:
+
+    \[A(0) = 6, A(n) = 2A(n-1) +10\textrm{ for } n \geq 1\]
+
+    Use the method of unraveling to find a closed form for $A(n)$ and then prove that it is a closed form for $A(n)$ using induction.
+    \bigskip
+
+    {\bf Hint:} It may be helpful to use the formula $\sum_{i=0}^{n-1} x^i = \frac{x^n - 1}{x-1}$\\
+
+    $A(n) = 2A(n-1) +10 = 2(2A(n-2) + 10) + 10 = 4A(n-2) + 20 + 10 = 4(2A(n-3)+10) + 20 + 10 = 8A(n-3) + 40 + 20 + 10 = 8(2A(n-4) + 10) + 40 + 20 + 10 = 16A(n-4) + 80 + 40 + 20 + 10$\\4A(n-2) + 20 + 10 \\8A(n-3) + 40 + 20 + 10 \\ 16A(n-4) + 80 + 40 + 20 + 10
+
+    In general, for k, $P(n) = 2^kA(n-k)+\sum_{i=0}^{k-1} 10*2^i = 2^kA(n-k)+10*\frac{2^k - 1}{2-1}=2^kA(n-k)+10*2^k - 10$\\
+    $P(n) = 2^nA(n-n)+10*2^n - 10 = 2^nA(0) + 10*2^n - 10 = 6*2^n+ 10*2^n-10 = 16*2^n - 10 = 2^{n+4} - 10$\\ \\
+    Base case: $2^{0 + 4} - 10 = 16 - 10 = 6 = A(0)$\\
+    Induction hypothesis: Assume $A(n) = 2^{n+4} - 10$ for some $n \geq 0$\\.
+    Induction step: WTS $A(n + 1) = 2^{n+5} - 10$\\
+    $A(n+1) = 2A(n) + 10 = 2 *(2^{n+4}-10) + 10 = 2^{n+5} -20 + 10 = 2^{n+5} - 10$\\
+    Since the claim holds true for $A(0)$, and $A(n) = 2^{n+4} - 10$ implies $A(n+1) = 2^{n+5} - 10$ for some $n \geq 0$, it follows by induction that the claim is true for all non-negative integers.
+\end{enumerate}
+
+\end{document}
